@@ -57,11 +57,6 @@ impl VecParser {
         }
     }
 
-    fn into_vec_str(self) -> EnverorResult<Vec<String>> {
-        //TODO
-        Ok(vec![self.0])
-    }
-
     fn into_vec_number(self) -> EnverorResult<Vec<Number>> {
         self.0
             .strip_bracket()
@@ -78,5 +73,48 @@ impl VecParser {
             .into_iter()
             .map(|s| ValueParser::new(s).into_bool())
             .collect()
+    }
+
+    fn into_vec_str(self) -> EnverorResult<Vec<String>> {
+        let mut strs = Vec::new();
+        let mut in_quotes = false;
+        let mut start = 0;
+        let mut separated = true;
+
+        for (i, c) in self.0.chars().enumerate() {
+            match c {
+                '"' => {
+                    if in_quotes {
+                        strs.push(self.0[start..i].to_owned());
+                        separated = false;
+                    } else {
+                        if !separated {
+                            return Err(EnverorError::InvalidConfig(
+                                "Vec<String> Format: not separated".into(),
+                            ));
+                        }
+                        start = i + 1;
+                    }
+                    in_quotes = !in_quotes;
+                }
+                ',' => {
+                    if separated {
+                        return Err(EnverorError::InvalidConfig(
+                            "Vec<String> Format: invalid separator".into(),
+                        ));
+                    }
+                    if !in_quotes {
+                        separated = true;
+                    }
+                }
+                _ => {}
+            }
+        }
+        if in_quotes {
+            return Err(EnverorError::InvalidConfig(
+                "Vec<String> Format: unexpected EOF".into(),
+            ));
+        }
+        Ok(strs)
     }
 }
