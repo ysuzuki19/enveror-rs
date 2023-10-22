@@ -13,10 +13,9 @@ pub struct Loader {
 
 impl Loader {
     pub fn load(&mut self) -> EnverorResult<()> {
-        //TODO: uncomment out
-        // for (k, v) in std::env::vars() {
-        //     self.kvmap.insert(k, v);
-        // }
+        for (k, v) in std::env::vars() {
+            self.kvmap.insert(k, v);
+        }
 
         for path in &self.paths {
             let content = std::fs::read_to_string(path)?;
