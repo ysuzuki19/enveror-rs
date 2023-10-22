@@ -1,3 +1,4 @@
+mod validator;
 mod value_parser;
 mod vec_parser;
 
@@ -23,24 +24,6 @@ impl FromStr for Value {
     type Err = EnverorError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let vp = ValueParser::new(s.to_string());
-
-        if vp.is_vec() {
-            let vp = VecParser::new(s.to_owned());
-            match vp.vec_type() {
-                "str" => return Ok(Self::VecStr(vp.into_vec_str()?)),
-                "number" => return Ok(Self::VecNumber(vp.into_vec_number()?)),
-                "bool" => return Ok(Self::VecBool(vp.into_vec_bool()?)),
-                _ => return Err(EnverorError::InvalidConfig("vec".into())),
-            }
-        }
-        if vp.is_bool() {
-            return Ok(Self::Bool(vp.into_bool()?));
-        }
-        if vp.is_number() {
-            return Ok(Self::Number(vp.into_number()?));
-        }
-
-        Ok(Value::Str(s.to_string()))
+        ValueParser::new(s.to_string()).into_value()
     }
 }

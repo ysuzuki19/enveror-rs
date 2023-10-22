@@ -1,6 +1,28 @@
 use crate::error::{EnverorError, EnverorResult};
 
-use super::{value_parser::ValueParser, Number};
+use super::{validator::Validator, value_parser::ValueParser, Number};
+
+trait StripBracket {
+    fn strip_bracket(&self) -> String;
+}
+
+impl StripBracket for String {
+    fn strip_bracket(&self) -> String {
+        self.trim_start_matches('[')
+            .trim_end_matches(']')
+            .to_owned()
+    }
+}
+
+trait CommaSeparate {
+    fn comma_separate(&self) -> Vec<String>;
+}
+
+impl CommaSeparate for String {
+    fn comma_separate(&self) -> Vec<String> {
+        self.split(',').map(|s| s.trim().to_owned()).collect()
+    }
+}
 
 pub(super) struct VecParser(String);
 
@@ -9,69 +31,52 @@ impl VecParser {
         Self(s)
     }
 
-    pub fn is_vec(&self) -> bool {
-        self.0.starts_with('[') && self.0.ends_with(']')
+    pub fn into_value(self) -> EnverorResult<super::Value> {
+        match self.estimate_vec_type() {
+            "str" => Ok(super::Value::VecStr(self.into_vec_str()?)),
+            "bool" => Ok(super::Value::VecBool(self.into_vec_bool()?)),
+            "number" => Ok(super::Value::VecNumber(self.into_vec_number()?)),
+            _ => Err(EnverorError::InvalidConfig(
+                "Vec must to be same type".into(),
+            )),
+        }
     }
 
-    fn strip_bracket(&self) -> &str {
-        self.0.trim_start_matches('[').trim_end_matches(']')
-    }
-
-    pub fn vec_type(&self) -> &str {
+    fn estimate_vec_type(&self) -> &str {
         if self.0.contains('"') {
             "str"
         } else {
-            let elements = self.0.split(',').map(|s| s.trim()).collect::<Vec<_>>();
-            let is_number = elements
-                .iter()
-                .all(|&s| ValueParser::new(s.to_owned()).is_number());
-            let is_bool = elements
-                .iter()
-                .all(|&s| ValueParser::new(s.to_owned()).is_bool());
-            if is_number {
-                return "number";
-            }
-            if is_bool {
+            let elements = self.0.strip_bracket().comma_separate();
+            if elements.iter().all(|s| s.is_bool()) {
                 return "bool";
+            }
+            if elements.iter().all(|s| s.is_number()) {
+                return "number";
             }
             "invalid"
         }
     }
 
-    pub fn into_vec_str(self) -> EnverorResult<Vec<String>> {
+    fn into_vec_str(self) -> EnverorResult<Vec<String>> {
         //TODO
         Ok(vec![self.0])
     }
 
-    pub fn into_vec_number(self) -> EnverorResult<Vec<Number>> {
-        let elements = self.0.split(',').map(|s| s.trim()).collect::<Vec<_>>();
-        let is_number = elements
-            .iter()
-            .all(|&s| ValueParser::new(s.to_owned()).is_number());
-        if is_number {
-            return Ok(elements
-                .iter()
-                .map(|&s| ValueParser::new(s.to_owned()).into_number().unwrap())
-                .collect::<Vec<_>>());
-        }
-        Err(EnverorError::InvalidConfig(
-            "Vec must to be same type".into(),
-        ))
+    fn into_vec_number(self) -> EnverorResult<Vec<Number>> {
+        self.0
+            .strip_bracket()
+            .comma_separate()
+            .into_iter()
+            .map(|s| ValueParser::new(s).into_number())
+            .collect()
     }
 
-    pub fn into_vec_bool(self) -> EnverorResult<Vec<bool>> {
-        let elements = self.0.split(',').map(|s| s.trim()).collect::<Vec<_>>();
-        let is_bool = elements
-            .iter()
-            .all(|&s| ValueParser::new(s.to_owned()).is_bool());
-        if is_bool {
-            return Ok(elements
-                .iter()
-                .map(|&s| ValueParser::new(s.to_owned()).into_bool().unwrap())
-                .collect::<Vec<_>>());
-        }
-        Err(EnverorError::InvalidConfig(
-            "Vec must to be same type".into(),
-        ))
+    fn into_vec_bool(self) -> EnverorResult<Vec<bool>> {
+        self.0
+            .strip_bracket()
+            .comma_separate()
+            .into_iter()
+            .map(|s| ValueParser::new(s).into_bool())
+            .collect()
     }
 }

@@ -1,6 +1,6 @@
 use crate::error::{EnverorError, EnverorResult};
 
-use super::Number;
+use super::{validator::Validator, Number};
 
 pub(super) struct ValueParser(String);
 
@@ -9,12 +9,16 @@ impl ValueParser {
         Self(s)
     }
 
-    pub fn is_vec(&self) -> bool {
-        self.0.starts_with('[') && self.0.ends_with(']')
-    }
-
-    pub fn is_bool(&self) -> bool {
-        self.0 == "true" || self.0 == "false"
+    pub fn into_value(self) -> EnverorResult<super::Value> {
+        if self.0.is_vec() {
+            super::VecParser::new(self.0).into_value()
+        } else if self.0.is_bool() {
+            Ok(super::Value::Bool(self.into_bool()?))
+        } else if self.0.is_number() {
+            Ok(super::Value::Number(self.into_number()?))
+        } else {
+            Ok(super::Value::Str(self.0))
+        }
     }
 
     pub fn into_bool(self) -> EnverorResult<bool> {
@@ -26,10 +30,6 @@ impl ValueParser {
                 self.0
             ))),
         }
-    }
-
-    pub fn is_number(&self) -> bool {
-        self.0.parse::<Number>().is_ok()
     }
 
     pub fn into_number(self) -> EnverorResult<Number> {

@@ -7,3 +7,5 @@ WORKER_COUNT =4
 TIMEOUT_SECONDS= 2.3
 EMPTY_STRING=" "
 SAMPLE = true
+CONFIG.FLAGS = [true, false, false, true]
+CONFIG.NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
