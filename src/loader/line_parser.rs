@@ -1,15 +1,15 @@
 use crate::error::{EnverorError, EnverorResult};
 
-pub struct LineParser {
+pub(super) struct LineParser {
     line: String,
 }
 
 impl LineParser {
-    pub fn new(line: String) -> Self {
+    pub(super) fn new(line: String) -> Self {
         Self { line }
     }
 
-    pub fn parse(self) -> EnverorResult<(String, String)> {
+    pub(super) fn parse(self) -> EnverorResult<(String, String)> {
         let parts = self.line.splitn(2, '=').collect::<Vec<_>>();
 
         if parts.len() != 2 {

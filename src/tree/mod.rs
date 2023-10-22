@@ -1,10 +1,13 @@
+mod route;
+
 use std::collections::HashMap;
 
 use crate::{
     error::{EnverorError, EnverorResult},
-    route::Route,
     value::Value,
 };
+
+use self::route::Route;
 
 #[derive(Debug)]
 pub struct Branch {

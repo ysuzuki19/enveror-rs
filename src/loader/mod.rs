@@ -1,6 +1,10 @@
+mod line_parser;
+
 use std::{collections::HashMap, path::PathBuf};
 
-use crate::{error::EnverorResult, line_parser::LineParser};
+use crate::error::EnverorResult;
+
+use self::line_parser::LineParser;
 
 #[derive(typed_builder::TypedBuilder)]
 pub struct Loader {
