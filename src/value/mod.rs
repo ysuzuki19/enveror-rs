@@ -1,29 +1,45 @@
-mod validator;
-mod value_parser;
-mod vec_parser;
+use crate::into_json::IntoJson;
 
-use std::str::FromStr;
+use self::string_checker::StringChecker;
 
-use crate::error::EnverorError;
+mod string_checker;
 
-use self::{value_parser::ValueParser, vec_parser::VecParser};
+pub struct ValueValidator(String);
 
-pub type Number = f64;
+impl ValueValidator {
+    pub fn new(value: String) -> Self {
+        Self(value)
+    }
 
-#[derive(Debug, Clone)]
-pub enum Value {
-    VecBool(Vec<bool>),
-    VecNumber(Vec<Number>),
-    VecStr(Vec<String>),
-    Bool(bool),
-    Number(Number),
-    Str(String),
+    pub fn escape(self) -> String {
+        self.0
+            .replace('\\', "\\\\")
+            .replace('\n', "\\n")
+            .replace('\t', "\\t")
+            .replace('"', "\\\"")
+            .replace('\r', "\\r")
+            .replace('\x08', "\\b") // バックスペース
+            .replace('\x0C', "\\f") // フォームフィード
+            .replace('\x1B', "\\u001B") // ANSIエスケープコードの開始
+            .replace('\x07', "\\u0007") // ベル
+    }
+
+    pub fn trim_quotes(&mut self) {
+        self.0 = self
+            .0
+            .trim_start_matches('"')
+            .trim_end_matches('"')
+            .to_owned();
+    }
 }
 
-impl FromStr for Value {
-    type Err = EnverorError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        ValueParser::new(s.to_string()).into_value()
+impl IntoJson for ValueValidator {
+    fn into_json(mut self) -> String {
+        if self.0.is_vec() || self.0.is_bool() || self.0.is_number() {
+            self.0
+        } else {
+            self.trim_quotes();
+            format!("\"{}\"", self.escape())
+        }
     }
 }
