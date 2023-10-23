@@ -3,6 +3,9 @@ pub enum EnverorError {
     #[error("io::Error: {0}")]
     Io(#[from] std::io::Error),
 
+    #[error("serde_json::Error: {0}")]
+    SerdeJson(#[from] serde_json::Error),
+
     #[error("InvalidConfig: {0}")]
     InvalidConfig(String),
 
