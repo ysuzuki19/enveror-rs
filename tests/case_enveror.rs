@@ -1,39 +1,48 @@
-use std::str::FromStr;
+use std::path::PathBuf;
 
-#[derive(Debug, PartialEq)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
 enum Stage {
     Dev,
     Prod,
 }
 
-impl FromStr for Stage {
-    type Err = ();
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "dev" => Ok(Self::Dev),
-            "prod" => Ok(Self::Prod),
-            _ => Err(()),
-        }
-    }
-}
-
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "UPPERCASE")]
 struct EnverorConfig {
     stage: Stage,
     cloud: Cloud,
     cors_origins: Vec<String>,
-    worler_count: u8,
+    worker_count: u8,
     timeout_seconds: f32,
     empty_string: String,
     sample: bool,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "UPPERCASE")]
 struct Cloud {
     api_key_id: String,
     api_secret_key: String,
     storage: CloudStorage,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "UPPERCASE")]
 struct CloudStorage {
     images: String,
+}
+
+extern crate enveror;
+
+#[test]
+fn parse_deserialize() -> Result<(), Box<dyn std::error::Error>> {
+    enveror::Enveror::new()
+        .ignore_default_config()
+        .path(PathBuf::from("./tests/case_enveror"))
+        .load()?
+        .construct::<EnverorConfig>()?;
+    Ok(())
 }

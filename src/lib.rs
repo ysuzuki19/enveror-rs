@@ -3,7 +3,6 @@ use std::path::PathBuf;
 use error::EnverorResult;
 use into_json::IntoJson;
 use loader::Loader;
-use serde::de::DeserializeOwned;
 
 mod error;
 mod into_json;
@@ -11,11 +10,12 @@ mod loader;
 mod tree;
 mod value;
 
-struct Enveror {
+#[derive(Debug, Default)]
+pub struct Enveror {
     default_config_path: PathBuf,
     ignore_default_config: bool,
     config_paths: Option<Vec<PathBuf>>,
-    must_load_config: bool,
+    // must_load_config: bool,
     loaded_json: Option<String>,
 }
 
@@ -25,7 +25,7 @@ impl Enveror {
             default_config_path: PathBuf::from(".enveror"),
             ignore_default_config: false,
             config_paths: None,
-            must_load_config: false,
+            // must_load_config: false,
             loaded_json: None,
         }
     }
@@ -59,7 +59,7 @@ impl Enveror {
         self
     }
 
-    fn load(mut self) -> EnverorResult<Self> {
+    pub fn load(mut self) -> EnverorResult<Self> {
         let mut paths = Vec::new();
         if !self.ignore_default_config {
             paths.push(self.default_config_path.clone());
@@ -81,37 +81,16 @@ impl Enveror {
 
         Ok(self)
     }
-}
 
-impl Enveror {
-    pub fn into<T>(self) -> EnverorResult<T>
+    pub fn construct<T>(&self) -> EnverorResult<T>
     where
-        T: DeserializeOwned,
+        T: serde::de::DeserializeOwned,
     {
         let json = self
             .loaded_json
+            .clone()
             .ok_or(error::EnverorError::Custom("configs not loaded".into()))?;
-        Ok(serde_json::from_str(&json)?)
+        let deserialized = serde_json::from_str(&json)?;
+        Ok(deserialized)
     }
-}
-
-fn main() -> EnverorResult<()> {
-    // let mut loader = Loader::builder()
-    //     .paths(vec![PathBuf::from("./tests/case_enveror")])
-    //     .build();
-    // loader.load()?;
-    // let values = loader.values();
-
-    // let mut tree = tree::Tree::new();
-    // for (key, value) in values {
-    //     tree.insert(key.to_owned(), value.to_owned())?
-    // }
-
-    // println!("{}", tree.into_json());
-    let enveror = Enveror::new()
-        .ignore_default_config()
-        .path(PathBuf::from("./tests/case_enveror"))
-        .load()?;
-
-    Ok(())
 }
