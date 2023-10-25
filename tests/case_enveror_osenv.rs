@@ -2,6 +2,10 @@ use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
 
+fn default_timeout() -> u32 {
+    3
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
 struct EnverorConfig {
@@ -9,6 +13,8 @@ struct EnverorConfig {
     programatic_int: i32,
     programatic_str: String,
     programatic_arr: Vec<i32>,
+    #[serde(default = "default_timeout")]
+    timeout: u32,
 }
 
 extern crate enveror;
