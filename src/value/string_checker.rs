@@ -14,6 +14,6 @@ impl StringChecker for String {
     }
 
     fn is_number(&self) -> bool {
-        self.parse::<f64>().is_ok() || self.parse::<i64>().is_ok() || self.parse::<u64>().is_ok()
+        self.parse::<f64>().is_ok() || self.parse::<i128>().is_ok() || self.parse::<u128>().is_ok()
     }
 }
