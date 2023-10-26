@@ -1,7 +1,6 @@
 mod error;
 mod into_json;
 mod loader;
-mod string_extention;
 mod tree;
 
 use std::path::PathBuf;
