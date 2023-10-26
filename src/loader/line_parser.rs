@@ -1,11 +1,11 @@
 use crate::error::{EnverorError, EnverorResult};
 
-pub(super) struct LineParser {
-    line: String,
+pub(super) struct LineParser<'a> {
+    line: &'a str,
 }
 
-impl LineParser {
-    pub(super) fn new(line: String) -> Self {
+impl<'a> LineParser<'a> {
+    pub(super) fn new(line: &'a str) -> Self {
         Self { line }
     }
 
@@ -13,12 +13,11 @@ impl LineParser {
         let parts = self.line.splitn(2, '=').collect::<Vec<_>>();
 
         if parts.len() != 2 {
-            return Err(EnverorError::Custom(format!("Invalid line: {}", self.line)));
+            Err(EnverorError::InvalidConfig("must to be include '='".into()))
+        } else {
+            let lfs = parts[0].trim().to_owned();
+            let rfs = parts[1].trim().to_owned();
+            Ok((lfs, rfs))
         }
-
-        let lfs = parts[0].trim();
-        let rfs = parts[1].trim();
-
-        Ok((lfs.to_owned(), rfs.to_owned()))
     }
 }

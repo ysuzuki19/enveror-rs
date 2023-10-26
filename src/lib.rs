@@ -1,18 +1,21 @@
+mod error;
+mod into_json;
+mod loader;
+mod string_extention;
+mod tree;
+
 use std::path::PathBuf;
 
 use error::EnverorResult;
 use into_json::IntoJson;
 use loader::Loader;
 
-mod error;
-mod into_json;
-mod loader;
-mod tree;
-mod value;
+fn default_config_path() -> PathBuf {
+    PathBuf::from(".enveror")
+}
 
 #[derive(Debug, Default)]
 pub struct Enveror {
-    default_config_path: PathBuf,
     ignore_default_config: bool,
     config_paths: Option<Vec<PathBuf>>,
     // must_load_config: bool,
@@ -22,7 +25,6 @@ pub struct Enveror {
 impl Enveror {
     pub fn new() -> Self {
         Self {
-            default_config_path: PathBuf::from(".enveror"),
             ignore_default_config: false,
             config_paths: None,
             // must_load_config: false,
@@ -62,7 +64,7 @@ impl Enveror {
     pub fn load(mut self) -> EnverorResult<Self> {
         let mut paths = Vec::new();
         if !self.ignore_default_config {
-            paths.push(self.default_config_path.clone());
+            paths.push(default_config_path());
         }
         if let Some(config_paths) = self.config_paths.take() {
             paths.extend(config_paths);
@@ -73,8 +75,8 @@ impl Enveror {
         let values = loader.values();
 
         let mut tree = tree::Tree::new();
-        for (key, value) in values {
-            tree.insert(key.to_owned(), value.to_owned())?
+        for (k, v) in values {
+            tree.insert(k, v)?
         }
 
         self.loaded_json = Some(tree.into_json());
@@ -82,13 +84,12 @@ impl Enveror {
         Ok(self)
     }
 
-    pub fn construct<T>(&self) -> EnverorResult<T>
+    pub fn construct<T>(self) -> EnverorResult<T>
     where
         T: serde::de::DeserializeOwned,
     {
         let json = self
             .loaded_json
-            .clone()
             .ok_or(error::EnverorError::Custom("configs not loaded".into()))?;
         let deserialized = serde_json::from_str(&json)?;
         Ok(deserialized)

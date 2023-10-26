@@ -24,15 +24,15 @@ impl Loader {
         for path in &self.paths {
             let content = std::fs::read_to_string(path)?;
             for line in content.lines() {
-                let (key, val) = LineParser::new(line.into()).parse()?;
-                self.kvmap.insert(key, val);
+                let (k, v) = LineParser::new(line).parse()?;
+                self.kvmap.insert(k, v);
             }
         }
 
         Ok(())
     }
 
-    pub fn values(&self) -> &HashMap<String, String> {
-        &self.kvmap
+    pub fn values(self) -> HashMap<String, String> {
+        self.kvmap
     }
 }

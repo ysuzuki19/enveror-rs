@@ -8,22 +8,20 @@ use self::{node::Node, node_branch::Branch, route::Route};
 
 #[derive(Debug)]
 pub struct Tree {
-    root: Node,
+    root: Branch,
 }
 
 impl Tree {
     pub fn new() -> Self {
         Self {
-            root: Branch::new().into(),
+            root: Branch::new(),
         }
     }
 
     pub fn insert(&mut self, key: String, content: String) -> EnverorResult<()> {
         let route = key.parse::<Route>()?;
         let leaf = Node::Leaf(content);
-        if let Node::Branch(ref mut branch) = self.root {
-            branch.insert(route, leaf)?;
-        }
+        self.root.insert(route, leaf)?;
         Ok(())
     }
 }

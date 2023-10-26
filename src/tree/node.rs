@@ -1,4 +1,4 @@
-use crate::{into_json::IntoJson, value::ValueValidator};
+use crate::into_json::IntoJson;
 
 use super::node_branch::Branch;
 
@@ -17,7 +17,7 @@ impl From<Branch> for Node {
 impl IntoJson for Node {
     fn into_json(self) -> String {
         match self {
-            Node::Leaf(value) => ValueValidator::new(value).into_json(),
+            Node::Leaf(value) => value.into_json(),
             Node::Branch(branch) => branch.into_json(),
         }
     }
