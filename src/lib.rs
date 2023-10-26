@@ -17,7 +17,7 @@ fn default_config_path() -> PathBuf {
 pub struct Enveror {
     ignore_default_config: bool,
     config_paths: Option<Vec<PathBuf>>,
-    // must_load_config: bool,
+    ignore_file_notfound: bool,
     loaded_json: Option<String>,
 }
 
@@ -26,20 +26,20 @@ impl Enveror {
         Self {
             ignore_default_config: false,
             config_paths: None,
-            // must_load_config: false,
+            ignore_file_notfound: false,
             loaded_json: None,
         }
     }
 
-    pub fn ignore_default_config(mut self) -> Self {
-        self.ignore_default_config = true;
+    pub fn ignore_default_config(mut self, flag: bool) -> Self {
+        self.ignore_default_config = flag;
         self
     }
 
-    // pub fn must_load_config(mut self) -> Self {
-    //     self.must_load_config = true;
-    //     self
-    // }
+    pub fn ignore_file_notfound(mut self, flag: bool) -> Self {
+        self.ignore_file_notfound = flag;
+        self
+    }
 
     pub fn path(mut self, config_path: PathBuf) -> Self {
         match self.config_paths {
@@ -69,12 +69,14 @@ impl Enveror {
             paths.extend(config_paths);
         }
 
-        let mut loader = Loader::builder().paths(paths).build();
-        loader.load()?;
-        let values = loader.values();
+        let entries = Loader::builder()
+            .paths(paths)
+            .ignore_file_notfound(self.ignore_file_notfound)
+            .build()
+            .load()?;
 
         let mut tree = tree::Tree::new();
-        for (k, v) in values {
+        for (k, v) in entries {
             tree.insert(k, v)?
         }
 

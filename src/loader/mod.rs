@@ -7,32 +7,37 @@ use crate::error::EnverorResult;
 use self::line_parser::LineParser;
 
 #[derive(typed_builder::TypedBuilder)]
-pub struct Loader {
-    #[builder(default = vec![PathBuf::from(".enveror")])]
+pub(super) struct Loader {
     paths: Vec<PathBuf>,
 
-    #[builder(setter(skip), default)]
-    kvmap: HashMap<String, String>,
+    #[builder(default = false)]
+    ignore_file_notfound: bool,
 }
 
 impl Loader {
-    pub fn load(&mut self) -> EnverorResult<()> {
+    pub fn load(self) -> EnverorResult<HashMap<String, String>> {
+        let mut kvmap = HashMap::new();
+
         for (k, v) in std::env::vars() {
-            self.kvmap.insert(k, v);
+            kvmap.insert(k, v);
         }
 
         for path in &self.paths {
-            let content = std::fs::read_to_string(path)?;
-            for line in content.lines() {
-                let (k, v) = LineParser::new(line).parse()?;
-                self.kvmap.insert(k, v);
+            match std::fs::read_to_string(path) {
+                Ok(content) => {
+                    for line in content.lines() {
+                        let (k, v) = LineParser::new(line).parse()?;
+                        kvmap.insert(k, v);
+                    }
+                }
+                Err(e) => {
+                    if !self.ignore_file_notfound || e.kind() != std::io::ErrorKind::NotFound {
+                        return Err(e.into());
+                    }
+                }
             }
         }
 
-        Ok(())
-    }
-
-    pub fn values(self) -> HashMap<String, String> {
-        self.kvmap
+        Ok(kvmap)
     }
 }

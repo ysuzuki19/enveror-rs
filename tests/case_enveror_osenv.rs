@@ -27,7 +27,7 @@ fn parse_deserialize() -> Result<(), Box<dyn std::error::Error>> {
     std::env::set_var("PROGRAMATIC_ARR", "[1,2,3]");
 
     enveror::Enveror::new()
-        .ignore_default_config()
+        .ignore_default_config(true)
         .path(PathBuf::from("./tests/case_enveror_local"))
         .load()?
         .construct::<EnverorConfig>()?;

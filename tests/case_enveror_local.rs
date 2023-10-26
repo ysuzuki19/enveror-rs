@@ -27,7 +27,8 @@ extern crate enveror;
 #[test]
 fn parse_deserialize() -> Result<(), Box<dyn std::error::Error>> {
     enveror::Enveror::new()
-        .ignore_default_config()
+        .ignore_default_config(true)
+        .ignore_file_notfound(true)
         .path(PathBuf::from("./tests/case_enveror_local"))
         .load()?
         .construct::<EnverorConfig>()?;
