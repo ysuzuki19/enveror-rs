@@ -4,9 +4,9 @@ Library for Structured Environment Variables
 
 # Feature
 
-- represent the structure of env-vals using `.`.
-- define the structure of environment variables using `serde` in `enveror`.
-- each variable (without object) is fully defined within a single line.
+- represent the structure of env-vals using `.`
+- define the structure of environment variables using `serde` in `enveror`
+- each variable (without object) is fully defined within a single line
 
 # Sample
 
