@@ -43,17 +43,17 @@ If you want to define following structure,
 you can set variable as following environment variables.
 
 ```
-STAGE = "dev"
-CLOUD.API_KEY_ID = "hogehoge=hog"
-CLOUD.API_SECRET_KEY = "fug+;l[l;uw:er\-0-63-096z,nxvcafuga"
-CLOUD.STORAGE.IMAGES = "myimages"
-CORS_ORIGINS =["http://localhost:3000", "", "https://enveror.example.com"]
-WORKER_COUNT =4
-TIMEOUT_SECONDS= 2.3
+STAGE="dev"
+CLOUD.API_KEY_ID="hogehoge=hog"
+CLOUD.API_SECRET_KEY="fug+;l[l;uw:er\-0-63-096z,nxvcafuga"
+CLOUD.STORAGE.IMAGES="myimages"
+CORS_ORIGINS=["http://localhost:3000", "", "https://enveror.example.com"]
+WORKER_COUNT=4
+TIMEOUT_SECONDS=2.3
 EMPTY_STRING=" "
-SAMPLE = true
-CONFIG.FLAGS = [true, false, false, true]
-CONFIG.NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+SAMPLE=true
+CONFIG.FLAGS=[true, false, false, true]
+CONFIG.NUMBERS=[1, 2, 3, 4, 5, 6, 7, 8, 9]
 ```
 
 ## code
