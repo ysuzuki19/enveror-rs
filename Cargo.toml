@@ -2,6 +2,10 @@
 name = "enveror"
 version = "0.1.0"
 edition = "2021"
+authors = ["ysuzuki19"]
+repository = "https://github.com/ysuzuki19/enveror-rs"
+license = "MIT"
+license-file = "LICENSE"
 
 [lib]
 path = "src/lib.rs"
