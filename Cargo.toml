@@ -6,6 +6,7 @@ authors = ["ysuzuki19"]
 repository = "https://github.com/ysuzuki19/enveror-rs"
 license = "MIT"
 license-file = "LICENSE"
+description = "A library to load environment variables into structs."
 
 [lib]
 path = "src/lib.rs"
