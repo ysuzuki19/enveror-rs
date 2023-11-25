@@ -40,7 +40,7 @@ If you want to define following structure,
 }
 ```
 
-you can set variable as following environment variables.
+You can set variable as following environment variables.
 
 ```
 STAGE="dev"
