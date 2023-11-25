@@ -26,6 +26,9 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
 
+      - name: Test
+        run: cargo test --verbose
+
       - name: Publish
         run: cargo publish
         env:
