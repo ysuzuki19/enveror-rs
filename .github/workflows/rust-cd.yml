@@ -1,16 +1,14 @@
-name: Rust
+name: Rust CD
 
 on:
-  push:
-    branches: ['main']
-  pull_request:
-    branches: ['main']
+  release:
+    types: [created]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  ci:
+  cd:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,8 +16,6 @@ jobs:
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy
 
       - name: Cache cargo dependencies
         uses: actions/cache@v3
@@ -30,14 +26,10 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
 
-      - name: Build
-        run: cargo build --verbose
-
       - name: Test
         run: cargo test --verbose
 
-      - name: Check Formatting
-        run: cargo fmt -- --check
-
-      - name: Check Linting
-        run: cargo clippy --all-targets --all-features -- -D warnings
+      - name: Publish
+        run: cargo publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_TOKEN }}

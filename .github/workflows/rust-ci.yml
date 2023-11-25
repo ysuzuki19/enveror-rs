@@ -1,14 +1,16 @@
-name: Publish Crate to crates.io
+name: Rust CI
 
 on:
-  release:
-    types: [created]
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  publish:
+  ci:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,6 +18,8 @@ jobs:
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
 
       - name: Cache cargo dependencies
         uses: actions/cache@v3
@@ -26,10 +30,14 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
 
+      - name: Build
+        run: cargo build --verbose
+
       - name: Test
         run: cargo test --verbose
 
-      - name: Publish
-        run: cargo publish
-        env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_TOKEN }}
+      - name: Check Formatting
+        run: cargo fmt -- --check
+
+      - name: Check Linting
+        run: cargo clippy --all-targets --all-features -- -D warnings
