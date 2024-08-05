@@ -5,6 +5,7 @@ mod tree;
 
 use std::path::PathBuf;
 
+pub use error::Error;
 use error::Result;
 use into_json::IntoJson;
 use loader::Loader;
