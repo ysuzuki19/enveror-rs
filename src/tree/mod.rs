@@ -3,7 +3,7 @@ mod node_branch;
 mod route;
 mod string_into_json;
 
-use crate::{error::EnverorResult, into_json::IntoJson};
+use crate::{error::Result, into_json::IntoJson};
 
 use self::{node::Node, node_branch::Branch, route::Route};
 
@@ -19,7 +19,7 @@ impl Tree {
         }
     }
 
-    pub fn insert(&mut self, key: String, content: String) -> EnverorResult<()> {
+    pub fn insert(&mut self, key: String, content: String) -> Result<()> {
         let route = key.parse::<Route>()?;
         let leaf = Node::Leaf(content);
         self.root.insert(route, leaf)?;

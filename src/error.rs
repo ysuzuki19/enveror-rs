@@ -1,5 +1,5 @@
 #[derive(Debug, thiserror::Error)]
-pub enum EnverorError {
+pub enum Error {
     #[error("io::Error: {0}")]
     Io(#[from] std::io::Error),
 
@@ -13,4 +13,4 @@ pub enum EnverorError {
     Custom(String),
 }
 
-pub type EnverorResult<T> = std::result::Result<T, EnverorError>;
+pub(crate) type Result<T> = std::result::Result<T, Error>;

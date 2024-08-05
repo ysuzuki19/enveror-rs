@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{
-    error::{EnverorError, EnverorResult},
+    error::{Error, Result},
     into_json::IntoJson,
 };
 
@@ -19,13 +19,13 @@ impl Branch {
         }
     }
 
-    pub fn insert(&mut self, mut route: Route, leaf: Node) -> EnverorResult<()> {
+    pub fn insert(&mut self, mut route: Route, leaf: Node) -> Result<()> {
         if route.has_subroute() {
             let key = route.pop()?;
             let child = self.children.entry(key).or_insert(Branch::new().into());
             match child {
                 Node::Leaf(_) => {
-                    return Err(EnverorError::InvalidConfig(
+                    return Err(Error::InvalidConfig(
                         "cannot act as both a category and a value.".into(),
                     ))
                 }
@@ -37,7 +37,7 @@ impl Branch {
             let key = route.front();
             match self.children.get(&key) {
                 Some(_) => {
-                    return Err(EnverorError::InvalidConfig(
+                    return Err(Error::InvalidConfig(
                         "cannot act as both a category and a value.".into(),
                     ))
                 }

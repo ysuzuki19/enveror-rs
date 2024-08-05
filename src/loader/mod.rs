@@ -2,7 +2,7 @@ mod line_parser;
 
 use std::{collections::HashMap, path::PathBuf};
 
-use crate::error::EnverorResult;
+use crate::error::Result;
 
 use self::line_parser::LineParser;
 
@@ -15,7 +15,7 @@ pub(super) struct Loader {
 }
 
 impl Loader {
-    pub fn load(self) -> EnverorResult<HashMap<String, String>> {
+    pub fn load(self) -> Result<HashMap<String, String>> {
         let mut kvmap = HashMap::new();
 
         for (k, v) in std::env::vars() {

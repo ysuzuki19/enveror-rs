@@ -1,6 +1,6 @@
 use std::{collections::VecDeque, str::FromStr};
 
-use crate::error::{EnverorError, EnverorResult};
+use crate::error::{Error, Result};
 
 #[derive(Debug, Clone)]
 pub struct Route {
@@ -17,23 +17,23 @@ impl Route {
         self.front.clone()
     }
 
-    pub fn pop(&mut self) -> EnverorResult<String> {
+    pub fn pop(&mut self) -> Result<String> {
         if let Some(next) = self.subroute.pop_front() {
             let front = self.front.clone();
             self.front = next;
             Ok(front)
         } else {
-            Err(EnverorError::Custom("Route has only front value".into()))
+            Err(Error::Custom("Route has only front value".into()))
         }
     }
 }
 
 impl FromStr for Route {
-    type Err = EnverorError;
+    type Err = Error;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
+    fn from_str(s: &str) -> Result<Self> {
         if s.is_empty() {
-            return Err(EnverorError::Custom(format!("Invalid key route: {}", s)));
+            return Err(Error::Custom(format!("Invalid key route: {}", s)));
         }
         let mut subroute = s.split('.').map(|s| s.to_owned()).collect::<VecDeque<_>>();
         let front = subroute.pop_front().expect("Failed to get front");

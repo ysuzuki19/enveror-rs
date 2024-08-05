@@ -5,7 +5,7 @@ mod tree;
 
 use std::path::PathBuf;
 
-use error::EnverorResult;
+use error::Result;
 use into_json::IntoJson;
 use loader::Loader;
 
@@ -60,7 +60,7 @@ impl Enveror {
         self
     }
 
-    pub fn load(mut self) -> EnverorResult<Self> {
+    pub fn load(mut self) -> Result<Self> {
         let mut paths = Vec::new();
         if !self.ignore_default_config {
             paths.push(default_config_path());
@@ -85,13 +85,13 @@ impl Enveror {
         Ok(self)
     }
 
-    pub fn construct<T>(self) -> EnverorResult<T>
+    pub fn construct<T>(self) -> Result<T>
     where
         T: serde::de::DeserializeOwned,
     {
         let json = self
             .loaded_json
-            .ok_or(error::EnverorError::Custom("configs not loaded".into()))?;
+            .ok_or(error::Error::Custom("configs not loaded".into()))?;
         let deserialized = serde_json::from_str(&json)?;
         Ok(deserialized)
     }
