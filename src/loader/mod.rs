@@ -26,8 +26,9 @@ impl Loader {
             match std::fs::read_to_string(path) {
                 Ok(content) => {
                     for line in content.lines() {
-                        let (k, v) = LineParser::new(line).parse()?;
-                        kvmap.insert(k, v);
+                        if let Some((k, v)) = LineParser::new(line).parse()? {
+                            kvmap.insert(k, v);
+                        }
                     }
                 }
                 Err(e) => {
