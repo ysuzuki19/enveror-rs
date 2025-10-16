@@ -6,15 +6,15 @@
 
 Library for Structured Environment Variables
 
-# Feature
+## Feature
 
 - represent the structure of env-vals using `.`
 - define the structure of environment variables using `serde` in `enveror`
 - each variable (without object) is fully defined within a single line
 
-# Sample
+## Sample
 
-## config
+### config
 
 If you want to define following structure,
 
@@ -56,7 +56,7 @@ CONFIG.FLAGS=[true, false, false, true]
 CONFIG.NUMBERS=[1, 2, 3, 4, 5, 6, 7, 8, 9]
 ```
 
-## code
+### code
 
 The following is testing code for parsing and deserialization.
 
