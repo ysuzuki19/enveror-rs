@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD033 -->
+
 # enveror
 
 [<img alt="github" src="https://img.shields.io/badge/github-ysuzuki19/enveror-8da0cb?style=for-the-badge&labelColor=555555&logo=github" height="20">](https://github.com/ysuzuki19/enveror-rs)
@@ -99,11 +101,12 @@ struct CloudStorage {
 }
 
 fn parse_deserialize() -> Result<(), Box<dyn std::error::Error>> {
-    enveror::Enveror::new()
+    let e = enveror::Enveror::new()
         .ignore_default_config(true)
         .path(PathBuf::from("./tests/case_enveror"))
         .load()?
         .construct::<EnverorConfig>()?;
+    println!("{:#?}", e);
     Ok(())
 }
 ```
