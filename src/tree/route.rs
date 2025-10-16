@@ -33,7 +33,7 @@ impl FromStr for Route {
 
     fn from_str(s: &str) -> Result<Self> {
         if s.is_empty() {
-            return Err(Error::Custom(format!("Invalid key route: {}", s)));
+            return Err(Error::Custom(format!("Invalid key route: {s}")));
         }
         let mut subroute = s.split('.').map(|s| s.to_owned()).collect::<VecDeque<_>>();
         let front = subroute.pop_front().expect("Failed to get front");
