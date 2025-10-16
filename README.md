@@ -98,7 +98,6 @@ struct CloudStorage {
     images: String,
 }
 
-#[test]
 fn parse_deserialize() -> Result<(), Box<dyn std::error::Error>> {
     enveror::Enveror::new()
         .ignore_default_config()
