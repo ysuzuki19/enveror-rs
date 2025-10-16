@@ -42,7 +42,7 @@ If you want to define following structure,
 
 You can set variable as following environment variables.
 
-```
+```env
 STAGE="dev"
 CLOUD.API_KEY_ID="hogehoge=hog"
 CLOUD.API_SECRET_KEY="fug+;l[l;uw:er\-0-63-096z,nxvcafuga"
@@ -97,8 +97,6 @@ struct Cloud {
 struct CloudStorage {
     images: String,
 }
-
-extern crate enveror;
 
 #[test]
 fn parse_deserialize() -> Result<(), Box<dyn std::error::Error>> {
