@@ -9,8 +9,6 @@ struct EnverorConfig {
     sentence: String,
 }
 
-extern crate enveror;
-
 #[test]
 fn parse_deserialize() -> Result<(), Box<dyn std::error::Error>> {
     let c = enveror::Enveror::new()

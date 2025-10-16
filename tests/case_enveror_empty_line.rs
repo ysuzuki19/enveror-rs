@@ -8,8 +8,6 @@ struct EnverorConfig {
     name: String,
 }
 
-extern crate enveror;
-
 #[test]
 fn parse_deserialize() -> Result<(), Box<dyn std::error::Error>> {
     enveror::Enveror::new()

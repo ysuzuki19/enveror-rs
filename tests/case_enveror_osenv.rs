@@ -17,8 +17,6 @@ struct EnverorConfig {
     timeout: u32,
 }
 
-extern crate enveror;
-
 #[test]
 fn parse_deserialize() -> Result<(), Box<dyn std::error::Error>> {
     std::env::set_var("PROGRAMATIC_BOOL", "true");
