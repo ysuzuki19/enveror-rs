@@ -3,13 +3,6 @@ use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "lowercase")]
-enum Stage {
-    Dev,
-    Prod,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
 struct EnverorConfig {
     developer: Developer,
